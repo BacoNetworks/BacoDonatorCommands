@@ -1,6 +1,5 @@
 package baconetworks.bacodonatorcommands.commands;
 
-import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -35,7 +34,7 @@ public class PrefixCommand implements CommandExecutor {
             String result = ArgumentString;
 
             if(ArgumentString.length() < 2){
-                Text badlenght = Text.builder("One length prefixes are not allowed! ").color(TextColors.DARK_RED).build();
+                Text badlenght = Text.builder("One length prefixes are not allowed!").color(TextColors.DARK_RED).build();
                 src.sendMessage(badlenght);
                 return CommandResult.success();
             }
@@ -46,15 +45,15 @@ public class PrefixCommand implements CommandExecutor {
             }
 
             for (String forbiddenRank : ForbiddenRanks) {
-                if (StringUtils.containsIgnoreCase(forbiddenRank, result)) {
-                    Text badprefix = Text.builder("Impersonating staff or a contributor is a bannable offence!").color(TextColors.DARK_RED).build();
+                if (result.toLowerCase().contains(forbiddenRank)) {
+                    Text badprefix = Text.builder(" This prefix is not usable since it contains characters of either a staff rank or the contributor rank!  " + "\n" + " Character used: " + forbiddenRank).color(TextColors.DARK_RED).build();
                     src.sendMessage(badprefix);
                     return CommandResult.success();
                 }
             }
             for (String forbiddenColor : ForbiddenColors) {
-                if (StringUtils.containsIgnoreCase(forbiddenColor, ArgumentString)) {
-                    Text badcolor = Text.builder(" You are not allowed to use these color codes! Or the characters [ and ] or { and }").color(TextColors.DARK_RED).build();
+                if (ArgumentString.toLowerCase().contains(forbiddenColor)) {
+                    Text badcolor = Text.builder(" You are not allowed to use these color codes! Or the characters [ and ] or { and }." + "\n" + " Color code or character used: " + forbiddenColor).color(TextColors.DARK_RED).build();
                     src.sendMessage(badcolor);
                     return CommandResult.success();
                 }
