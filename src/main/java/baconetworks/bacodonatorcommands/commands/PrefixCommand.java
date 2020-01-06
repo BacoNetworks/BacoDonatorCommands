@@ -17,9 +17,7 @@ public class PrefixCommand implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (src instanceof ConsoleSource) {
-            Text notplayer = Text.builder("You need to be a player to run this command").color(TextColors.DARK_RED).build();
-            src.sendMessage(notplayer);
-            return CommandResult.success();
+            throw new CommandException(Text.of(TextColors.RED, "You need to be a player to run this command"));
         }
 
         Player player = (Player) src;
@@ -29,33 +27,30 @@ public class PrefixCommand implements CommandExecutor {
             String ArgumentString = Argument.get();
 
             String[] ForbiddenRanks = {"contributor", "mod", "moderator", "dev", "developer", "op", "admin", "senior", "senioradmin", "owner", "staff"};
-            String[] ForbiddenColors = {"&k", "&l", "&m", "&n", "&o", "&r", "[", "]", "{", "}" };
+            String[] ForbiddenColors = {"&k", "&l", "&m", "&n", "&o", "&r", "[", "]", "{", "}"};
 
             String result = ArgumentString;
 
-            if(ArgumentString.length() < 2){
-                Text badlenght = Text.builder("One length prefixes are not allowed!").color(TextColors.DARK_RED).build();
-                src.sendMessage(badlenght);
-                return CommandResult.success();
+            if (ArgumentString.length() < 2) {
+                throw new CommandException(Text.of(TextColors.RED, "One length prefixes are not allowed!"));
+            }
+            if (ArgumentString.length() > 12) {
+                throw new CommandException(Text.of(TextColors.RED, "You can't have super long prefixes."));
             }
 
-            while (result.contains("&")){
+            while (result.contains("&")) {
                 int replacePartIndex = result.indexOf('&');
-                result = result.substring(0, replacePartIndex) + result.substring(replacePartIndex+2);
+                result = result.substring(0, replacePartIndex) + result.substring(replacePartIndex + 2);
             }
 
             for (String forbiddenRank : ForbiddenRanks) {
                 if (result.toLowerCase().contains(forbiddenRank)) {
-                    Text badprefix = Text.builder(" This prefix is not usable since it contains characters of either a staff rank or the contributor rank!  " + "\n" + " Character used: " + forbiddenRank).color(TextColors.DARK_RED).build();
-                    src.sendMessage(badprefix);
-                    return CommandResult.success();
+                    throw new CommandException(Text.of(TextColors.RED, " This prefix is not usable since it contains characters of either a staff rank or the contributor rank!  " + "\n" + " Character used: " + forbiddenRank));
                 }
             }
             for (String forbiddenColor : ForbiddenColors) {
                 if (ArgumentString.toLowerCase().contains(forbiddenColor)) {
-                    Text badcolor = Text.builder(" You are not allowed to use these color codes! Or the characters [ and ] or { and }." + "\n" + " Color code or character used: " + forbiddenColor).color(TextColors.DARK_RED).build();
-                    src.sendMessage(badcolor);
-                    return CommandResult.success();
+                    throw new CommandException(Text.of(TextColors.RED, " You are not allowed to use these color codes! Or the characters [ and ] or { and }." + "\n" + " Color code or character used: " + forbiddenColor));
                 }
             }
 
@@ -64,14 +59,10 @@ public class PrefixCommand implements CommandExecutor {
             Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "lp user " + player.getUniqueId() + " meta clear prefixes");
             Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "lp user " + player.getUniqueId() + " meta addprefix 30 " + ArgumentString);
 
-            Text setprefix = Text.builder("Your prefix has been successfully set!").color(TextColors.GREEN).build();
-            src.sendMessage(setprefix);
-
+            player.sendMessage(Text.of(TextColors.GREEN, "Your prefix has been successfully set!"));
             return CommandResult.success();
         }else {
-            Text commandusage = Text.builder("Command usage: /prefix <prefix>").color(TextColors.DARK_RED).build();
-            src.sendMessage(commandusage);
+            throw new CommandException(Text.of(TextColors.RED, "Command usage: /prefix <prefix>"));
         }
-        return CommandResult.success();
     }
 }

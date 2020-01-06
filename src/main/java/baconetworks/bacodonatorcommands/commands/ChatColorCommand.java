@@ -24,9 +24,7 @@ public class ChatColorCommand implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (src instanceof ConsoleSource) {
-            Text notplayer = Text.builder("You need to be a player to run this command").color(TextColors.DARK_RED).build();
-            src.sendMessage(notplayer);
-            return CommandResult.success();
+            throw new CommandException(Text.of(TextColors.RED, "You need to be a player to run this command"));
         }
 
         Player player = (Player) src;
